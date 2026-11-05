@@ -19,6 +19,15 @@ Accuracy problems are our top priority.
 3. Skill names are lowercase and hyphenated, start with `hitc-`, and match their folder name exactly (the [Agent Skills specification](https://agentskills.io/specification) requires this).
 4. Every NetSuite fact needs a source in the skill's `references/sources.md`.
 5. **No sales pitches.** Products and services, including our own, belong only in a skill's "Getting expert help" section, described factually, and only when the diagnosis calls for them.
+6. Run `python3 scripts/build_skills.py --check` before opening a pull request. It checks every skill against the Agent Skills specification and Ask Oracle's upload rules. The same check runs automatically on every pull request.
+
+## Releasing (maintainers)
+
+1. Bump `metadata.version` in each skill you changed.
+2. Tag the commit and push the tag, e.g. `git tag v0.2.0 && git push origin v0.2.0`.
+3. The **Skills** GitHub Action validates the skills, builds one zip per skill, and publishes a release with the zips attached. The README's download links always point to the latest release.
+
+To build the zips locally, run `python3 scripts/build_skills.py`. They go in `dist/`, which git ignores.
 
 ## License
 

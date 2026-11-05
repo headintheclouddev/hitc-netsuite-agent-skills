@@ -13,6 +13,22 @@ Oracle publishes an excellent set of [SuiteCloud Agent Skills](https://github.co
 
 ## Installation
 
+### In NetSuite (Ask Oracle)
+
+1. Download the skill's zip from the [latest release](https://github.com/headintheclouddev/hitc-netsuite-agent-skills/releases/latest):
+   - [hitc-netsuite-performance.zip](https://github.com/headintheclouddev/hitc-netsuite-agent-skills/releases/latest/download/hitc-netsuite-performance.zip)
+   - [hitc-suitecommerce-development.zip](https://github.com/headintheclouddev/hitc-netsuite-agent-skills/releases/latest/download/hitc-suitecommerce-development.zip)
+2. In Ask Oracle, upload the zip from the **Skills** page, review the details, and save.
+
+Use the release zips rather than making your own. Ask Oracle accepts only one skill per zip, in a single top-level folder, so two common shortcuts fail with "File content not valid":
+
+- **GitHub's green Code → Download ZIP button** downloads the whole repository, which contains more than one skill.
+- **Finder's Compress on a Mac** adds a hidden `__MACOSX` folder. If you need to zip a skill yourself, run `zip -r -X <skill>.zip <skill> -x '*/.*'` from the repository folder, or `python3 scripts/build_skills.py`.
+
+The same zips work anywhere that accepts uploaded skills, such as custom skills in Claude.ai.
+
+### In coding assistants (Claude Code, Codex, Cline…)
+
 Using the open [`skills` CLI](https://www.npmjs.com/package/skills):
 
 ```bash
@@ -26,7 +42,7 @@ npx skills add headintheclouddev/hitc-netsuite-agent-skills --skill hitc-netsuit
 npx skills add headintheclouddev/hitc-netsuite-agent-skills
 ```
 
-Or copy a skill's folder into your assistant's skills directory (for example `~/.claude/skills/` for Claude Code), or upload it as a custom skill in Claude.ai.
+Or copy a skill's whole folder, including its `references/` folder, into your assistant's skills directory (for example `~/.claude/skills/` for Claude Code).
 
 ## Our principles
 
