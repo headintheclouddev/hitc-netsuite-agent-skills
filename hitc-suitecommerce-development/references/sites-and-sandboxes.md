@@ -43,6 +43,69 @@ If any link in that chain is missing, the site can look broken in ways that seem
 - Modules that are "allowed for now" load, with a console warning. Treat those warnings as future breakage.
 - Turning Safe Mode off to make an extension work hides the problem; it doesn't fix it. Fix the extension to use the Extensibility API instead.
 
+## Features to enable (new sites)
+
+**Documented:** on **Setup > Company > Enable Features** ([section_N2656144](https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/section_N2656144.html)):
+- **Web Presence** tab:
+  - Web Site
+  - Advanced Site Customization
+  - Descriptive URLs
+  - Site Management Tools
+  - one of **SuiteCommerce**, **SuiteCommerce MyAccount** or **SuiteCommerce Advanced**
+  - Host HTML Files
+  - Online Ordering
+- **SuiteCloud** tab:
+  - Client SuiteScript
+  - Server SuiteScript
+  - SuiteScript Server Pages
+  - SOAP Web Services
+
+Dependencies ([article_1114075116](https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/article_1114075116.html)):
+- Site Management Tools needs SuiteCommerce or SuiteCommerce Advanced enabled.
+- Descriptive URLs can only be enabled once a domain has been set up.
+
+## Field sets
+
+**Documented** ([section_N2659559](https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/section_N2659559.html), [section_3716578295](https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/section_3716578295.html)):
+- Field sets decide which item record fields the site can read through the Item Search API. Set them up on the website record (Commerce > Websites > Website List > Edit) on the **Field Sets** subtab.
+- Field set IDs must be lowercase alphanumeric, with no spaces or special characters.
+- **Field sets are public.** Anyone on the internet can request the fields you include, so don't expose costs, internal notes, or anything else sensitive.
+- SuiteCommerce expects a standard set of field set IDs, including `order` (needed for My Account order history), `search`, `details`, `matrixchilditems`, `matrixchilditems_search`, `correlateditems`, `relateditems`, `typeahead`, `itemssearcher`, `relateditems_details`, and `correlateditems_details`.
+- For SC and SCA, Oracle provides a setup script that creates these field sets. Run it in the SuiteScript Debugger as **SuiteScript 1.0**, and delete any existing field sets first. There's no setup script for MyAccount.
+- **To expose a custom item field:**
+  1. Give at least one item a value.
+  2. Add the field to a field set, e.g. `details`.
+  3. Rebuild the search index.
+  4. Check it with `/api/items?id=<id>&fields=<field_id>`.
+  5. Use it in a template ([developer portal](https://developers.suitecommerce.com/expose-custom-field-data-to-the-frontend.html)).
+
+## Search index
+
+**Documented:**
+- **Rebuild it manually:** Commerce > Websites > Website List > **Edit** > **Actions > Rebuild Search Index** ([bridgehead_1500035326](https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/bridgehead_1500035326.html)).
+  - The rebuild can take up to 10 minutes to start, and longer for large catalogues.
+  - You can only request it **twice in 24 hours**, so don't spend a request until your field sets and settings are final.
+  - It does nothing on an inactive site.
+- **Full rebuilds happen automatically** when you change facets, search fields, or sort options on the **Search Index** subtab. Removing a search field only triggers one if you remove all of its match types. They also happen when you add or remove languages or subsidiaries, change site currencies while currency-based fields are facets or sort options, change **Include Out Of Stock Items in Web Store**, or reactivate a site ([bridgehead_1500035290](https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/bridgehead_1500035290.html)).
+- **Incremental updates** happen automatically when item records change (including through CSV import), and with pricing, availability, and category changes ([bridgehead_1500035310](https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/bridgehead_1500035310.html)).
+- **Check progress:** Commerce > Websites > Website List, then **View** in the **Search Index Status** column. "Index is live" means the new index is serving searches ([bridgehead_1500035318](https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/bridgehead_1500035318.html)).
+
+## Caching
+
+**Documented:**
+- **Default CDN cache times** ([section_4411360163](https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/section_4411360163.html), [bridgehead_4170304533](https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/bridgehead_4170304533.html)):
+  - static files (images, CSS): 7 days
+  - session-independent scripts: 2 hours
+  - content delivery (`page.ss`) and Item Search API responses: 5 minutes
+- **Clear it:** Commerce > Content Management > **Cache Invalidation Requests > New** ([section_1495124477](https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/section_1495124477.html)).
+  - Choose the domains and either the whole domain or specific paths.
+  - Use it after redeploying, when the site still serves old file cabinet content, scripts, CMS content, or Item Search API output.
+  - Oracle notes that CDN invalidation takes about 7 minutes ([bridgehead_4170304533](https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/bridgehead_4170304533.html)).
+  - It **doesn't** clear visitors' browser caches ([chapter_4169406426](https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/chapter_4169406426.html)).
+  - Track the status at Commerce > Content Management > Cache Invalidation Requests.
+- **Automatic invalidation** happens when a hosted file is modified or overwritten, but **not** when a file is moved, renamed, deleted, or newly uploaded ([section_1496421879](https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/section_1496421879.html)).
+- Publishing Site Management Tools content clears that site's caches automatically.
+
 ## Sandbox refresh checklist
 
 **Documented:**

@@ -5,7 +5,7 @@ license: MIT
 compatibility: Works with any Agent Skills-compatible assistant. Most useful with shell and file access to the developer's theme and extension workspace. No NetSuite connection is required.
 metadata:
   author: Head in the Cloud Development
-  version: "0.1.0"
+  version: "0.2.0"
   audience: suitecommerce-developers
   homepage: https://github.com/headintheclouddev/hitc-netsuite-agent-skills
 ---
@@ -38,6 +38,7 @@ Before advising, find out (or work out from the workspace):
 | Setting up or repairing a site or sandbox: domains, touchpoints, SSP applications, configuration, Safe Mode | `references/sites-and-sandboxes.md` |
 | Writing extension code: components, Cart, events, services, templates, translations | `references/extensibility-api.md` |
 | Changing look and feel: theme overrides, Sass, fallback themes | `references/themes.md` |
+| Changing the order itself as the shopper builds it (rates, fee or charge lines, line validation) with Scriptable Cart | `references/scriptable-cart.md` |
 | Debugging something that "doesn't work on the site" | the debugging checklist below, then the relevant reference |
 
 ## Golden rules
@@ -62,9 +63,9 @@ Work down the list. Stop when something's wrong.
 4. **Timing:** some PDP, PLP, and Checkout methods only work after `afterShowContent`.
 5. **Template data:** add `{{log this}}` to the template to log its context to the console ([Oracle](https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/section_164633608125.html)). *Field note:* in local mode, these logs show the source as `javascript-libs.js`.
 6. **Configuration values:** read them with `Environment.getConfig('your.key')`. **Always pass a key.** Calling it without one returns the whole object, and Oracle warns it can cause "too much recursion" errors.
-7. **Data that never reaches the front end:** custom item fields must be in a field set the site uses, and the site must be reindexed ([developer portal](https://developers.suitecommerce.com/expose-custom-field-data-to-the-frontend.html)).
+7. **Data that never reaches the front end:** custom item fields must be in a field set the site uses, and the site must be reindexed ([developer portal](https://developers.suitecommerce.com/expose-custom-field-data-to-the-frontend.html)). Check the field with the Item Search API, and check the search index job status. See "Field sets" and "Search index" in `references/sites-and-sandboxes.md`.
 8. **Theme overrides:** is the active theme overriding the template you changed? Check the theme's `Overrides` folder.
-9. **Cache:** with a CDN in front, configuration changes take about 5 minutes to appear.
+9. **Cache:** with a CDN in front, configuration changes take about 5 minutes to appear ([Oracle](https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/section_4346479003.html)). After a redeploy, if old code or content is still being served, submit a **Cache Invalidation Request** (Commerce > Content Management > Cache Invalidation Requests > New). It doesn't clear the browser's own cache. See "Caching" in `references/sites-and-sandboxes.md`.
 10. **Verify on the live site, not just in the docs.** *Field note:* when you can't see the core source (SC Standard), the browser console on the running site is the best evidence available. Use it to inspect what a view, component, or configuration value actually contains at runtime. Use the `SC` object for debugging only, never in code.
 
 ## Working alongside other developers

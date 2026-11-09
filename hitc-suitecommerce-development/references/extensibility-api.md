@@ -87,7 +87,7 @@ Use `addChildView`, `addToViewContextDefinition`, and the components instead. Or
   - Add-to-cart tracking threw an error about generating a URL, but the add still completed.
   - Without Display in Web Site ticked, `addLine` failed with an "invalid item reference key … for subsidiary" error, which is misleading because the subsidiary was fine.
 - If an extension has to add **and later remove or change** a line, test a regular catalog item type first. Prove the full add/update/remove cycle in sandbox before committing to a design. Keep such items out of commerce categories and site search on purpose.
-- For charges that must always be right (fees, surcharges), enforce them **server-side** on the sales order as well. Treat the cart as presentation, and the server as the source of truth.
+- For charges that must always be right (fees, surcharges), enforce them on the order itself, not just in the cart UI. **Scriptable Cart** can add a charge line as the shopper builds the cart, as Oracle's gift wrap sample shows (see `scriptable-cart.md`). Also check whether a native setting covers the need first, such as the website's **Minimum Order Amount**. Treat the cart UI as presentation only.
 
 ## Backend services
 
@@ -99,6 +99,7 @@ Use `addChildView`, `addToViewContextDefinition`, and the components instead. Or
 ## Templates and translations
 
 - Templates are Handlebars (`.tpl`).
+  - `{{value}}` (double braces) escapes HTML. `{{{value}}}` (triple braces) outputs raw HTML. Oracle describes using it "in cases where you are certain" the HTML comes from a trusted, secure source ([OHC article_164148475043](https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/article_164148475043.html)). Never use triple braces on anything a shopper can enter.
   - **`{{log this}}`** logs the template's context to the console ([OHC section_164633608125](https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/section_164633608125.html)).
   - Use `{{!-- comments --}}`, which aren't rendered, rather than HTML comments, which are.
   - Oracle documents adding custom helpers with `Handlebars.registerHelper`. Its example `define`s the core `Handlebars` module, which is an exception to the "don't require core modules" rule. Check the current page for the recommended pattern.

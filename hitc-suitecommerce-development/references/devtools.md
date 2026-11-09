@@ -37,6 +37,7 @@ The base URL for Oracle links is `https://docs.oracle.com/en/cloud/saas/netsuite
 3. *Field note (seen on every version from 2021 to 26.1):* `gulp/config/config.json` is in `.gitignore`, so it's missing after a fresh clone. Every gulp task then fails immediately, for example with `Cannot read properties of undefined (reading 'application_manifest')`. Copy `gulp/config/config-default.json` to `config.json` in **both** the theme and the extension tools.
 4. Put the integration's consumer key and secret in the `.env` file in the tools folder (see Authentication). Keep it out of git.
 5. Recommended `.gitignore` entries: `node_modules/`, `.env`, `.nsdeploy`, `gulp/config/config.json`, `LocalDistribution/`, `DeployDistribution/`. *Field note:* the folders the tools generate can hold more than a thousand files. If git suddenly wants to commit them all, it's missing `.gitignore` entries.
+6. **Don't edit generated or tool files** ([theme](https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/section_1497018780.html), [extension](https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/section_1510174355.html)). Leave `DeployDistribution/`, `LocalDistribution/`, `gulp/`, `node_modules/`, `gulpfile.js`, `package.json`, and the files under `Workspace/Extras` alone. Oracle says not to manually edit the individual files in the tools' top-level folder. Your work belongs in `Workspace/`.
 
 ## Authentication
 
@@ -121,3 +122,5 @@ Useful flags and tasks:
 | Local work vanished | You ran fetch | Recover it from git, and commit before fetching next time |
 | `ENOENT … DeployDistribution` or node-sass errors (old tools) | Node/native module mismatch | Switch to the correct Node, then `npm rebuild node-sass` |
 | Extension won't run locally | Active theme hasn't been fetched for extension work | `gulp extension:fetch` (it also brings down the active theme) |
+| Deploy fails with `startDeploy Errored: Cannot Read Property 'files' of Undefined` | A RESTlet request ran out of governance units (worse with deeply nested folders) | Lower `chunk_size` (default 80) in `gulp/config/config.json` ([Oracle](https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/section_4404434060.html)) |
+| Builds behave strangely or deploy stale files | Leftover build output | `gulp clear` removes `DeployDistribution`, `LocalDistribution`, and `.nsdeploy`. Use it instead of deleting folders by hand, then choose the deploy target again ([Oracle](https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/section_1510956587.html)) |
